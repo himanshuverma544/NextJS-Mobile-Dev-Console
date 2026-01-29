@@ -1,4 +1,4 @@
-# Makeshift Mobile Dev Console
+# NextJS-Mobile-Dev-Console
 
 **Version:** 1.0.0
 
