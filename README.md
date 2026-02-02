@@ -1,33 +1,84 @@
 # NextJS-Mobile-Dev-Console
 
-**Version:** 1.0.0
+**Version:** 1.1.1
 
 ## Table of Contents
 - [Why This Exists](#why-this-exists)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
 - [Tested On](#tested-on)
 - [Usage](#usage)
   - [Raw Functions](#raw-functions-debugterminal--debugfile)
   - [Hook (useDebug)](#hook-usedebug)
   - [Simple Examples](#simple-examples)
 - [Configuration](#configuration)
-- [Directory Structure](#directory-structure)
 
 ---
 
 ## Why This Exists
 
-My laptop died while job hunting, and getting a new one wasn't in my favor. So here I'm, coding on my phone. Ever tried debugging on mobile? Mobile browser dev tools might as well not exist. So I built this module, my makeshift dev-console that dumps everything to the terminal and files.
+My laptop died, and getting a new one wasn’t in my choice, so picked up my Samsung S25, connected it with the screen (used Samsung DeX), logged myself inside GitHub Codespaces, and started coding. Saw DevTools and Inspect aren’t supported in mobile phone browsers, therefore built this package so I can simply see the logs inside the terminal or files. As simply seeing logs can help me debug and code. :)
 
-**Pro tip:** For the best mobile dev experience, use **screen mirroring + external mouse and keyboard**, and run your code on **GitHub Codespaces** for proper CPU power. Game changer.
+This package itself is a proof, that the setup is reliable and works.
 
-Happy Coding :)
+## Installation
+
+```bash
+npm install nextjs-mobile-dev-console
+```
+
+Or with yarn:
+```bash
+yarn add nextjs-mobile-dev-console
+```
+
+Or with pnpm:
+```bash
+pnpm add nextjs-mobile-dev-console
+```
+
+---
+
+## Quick Start
+
+**1. Optional: Initialize with custom configuration** (in your root layout or `_app.js`)
+
+```javascript
+// app/layout.js or pages/_app.js
+import { initDebug } from "nextjs-mobile-dev-console";
+
+// Configure once at app startup (optional - defaults work fine)
+initDebug({
+  allowDuplicates: false,      // Prevent duplicate logs
+  cacheExpiryMs: 3000,         // Cache window for duplicates
+  debounceDelayMs: 1000,       // Batch processing delay
+  allowHmrDuplicates: false,   // Prevent duplicates on HMR
+  logFilePath: "./debug-logs/my-debug.json",  // Custom log file path
+  timezone: "Asia/Kolkata",    // Timezone for log timestamps (default: system timezone)
+  isDev: true                  // Development mode (auto-detected by default)
+});
+
+export default function RootLayout({ children }) {
+  return <html><body>{children}</body></html>;
+}
+```
+
+**2. Use anywhere in your app**
+
+```javascript
+import { debug } from "nextjs-mobile-dev-console";
+
+debug.terminal("Hello from Next.js!");
+debug.file("User logged in:", userData);
+```
 
 ---
 
 ## Tested On:
 
-Next.js 14.2.6, might not work with other libraries\frameworks and versions.
+Next.js 14.2.6 and 15.x, might not work with other libraries\frameworks and versions.
 
+---
 
 ## Usage
 
@@ -36,31 +87,31 @@ Next.js 14.2.6, might not work with other libraries\frameworks and versions.
 Use these **everywhere** except during the component rendering phase:
 
 ```javascript
-import { debug } from "@/app/actions/logging";
+import { debug } from "nextjs-mobile-dev-console";
 
-// ✅ Event handlers
+// Event handlers
 onClick={() => debug.terminal("Button clicked")}
 
-// ✅ useEffect
+// useEffect
 useEffect(() => {
   debug.terminal("Component mounted");
   debug.file("User data:", userData);
 }, []);
 
-// ✅ API calls
+// API calls
 async function fetchData() {
   debug.terminal("Fetching data...");
   const data = await fetch("/api/data");
   debug.file("Response:", data);
 }
 
-// ✅ Server actions
+// Server actions
 export async function handleSubmit(formData) {
   debug.terminal("Form submitted");
   debug.file("Form data:", formData);
 }
 
-// ❌ NOT during render
+// NOT during render
 function Component() {
   debug.terminal("Rendering..."); // This will cause hydration errors!
   return <div>Hello</div>;
@@ -73,12 +124,12 @@ function Component() {
 Use the **hook only for rendering phase logging** to avoid hydration errors:
 
 ```javascript
-import { useDebug } from "@/app/actions/logging";
+import { useDebug } from "nextjs-mobile-dev-console";
 
 function Component() {
   const log = useDebug();
   
-  // ✅ Safe during render - logs after mount
+  // Safe during render - logs after mount
   log.terminal("Component rendered");
   log.file("Props:", props);
   
@@ -86,73 +137,57 @@ function Component() {
 }
 ```
 
-
-### Simple Examples
-
-**Basic logging:**
-```javascript
-debug.terminal("Hello world");
-debug.file("User logged in");
-```
-
-**With multiple arguments:**
-```javascript
-debug.terminal("User:", userId, "Action:", action);
-debug.file("Order:", orderId, "Total:", total);
-```
-
-**With objects:**
-```javascript
-debug.terminal("Cart state:", { items, total, discount });
-debug.file("API response:", response);
-```
+**[See more examples, best practices, and troubleshooting →](EXAMPLES.md)**
 
 
 ## Configuration
 
-Customize behavior in `config.js`:
+### Option 1: Use `initDebug()` (Recommended)
+
+Initialize once at app startup to customize behavior:
 
 ```javascript
-// Duplicate prevention for terminal/file logging
-DUPLICATE_CONFIG: {
-  ALLOW_DUPLICATES: false,     // false = prevent duplicates within cache window
-  CACHE_EXPIRY_MS: 3000,       // How long to remember logs (ms)
-  DEBOUNCE_DELAY_MS: 1000,     // Batch delay before processing (ms)
-}
+// app/layout.js or pages/_app.js
+import { initDebug } from "nextjs-mobile-dev-console";
 
-// HMR duplicate prevention for useDebug hook
-ALLOW_HMR_DUPLICATES: false    // false = log once per session even with HMR
+initDebug({
+  allowDuplicates: false,        // false = prevent duplicate logs (default: false)
+  cacheExpiryMs: 5000,           // How long to remember logs in ms (default: 3000)
+  debounceDelayMs: 1500,         // Batch delay before processing in ms (default: 1000)
+  allowHmrDuplicates: true,      // Allow duplicates on HMR remounts (default: false)
+  logFilePath: "./custom/path/logs.json",  // Custom log file path (default: ./debug-logs/logs-file.json)
+  timezone: "Asia/Kolkata"   // Timezone for timestamps (default: system timezone)
+});
 ```
 
+**All options are optional** - omit any to use defaults.
 
-## Directory Structure
+### Option 2: Environment Variables
 
+Set `LOG_FILE_PATH` in your `.env` file:
+
+```bash
+# .env.local
+LOG_FILE_PATH=./custom/path/debug.json
 ```
-logging/
-│
-├── config.js                          # Configuration settings
-├── index.js                           # Public API exports
-├── README.md                          # This file
-│
-├── hooks/
-│   └── useDebug.js                    # React hook for rendering phase
-│
-├── services/
-│   ├── logToTerminal.js               # Terminal output handler
-│   └── logToFile.js                   # File output handler
-│
-├── helpers/
-│   ├── messages.js                    # Centralized display messages
-│   └── functions/
-│       ├── cleanCache.js              # Cache cleanup utility
-│       ├── filterDuplicates.js        # Duplicate filtering logic
-│       ├── formatTime.js              # Timestamp formatter
-│       └── serializeArg.js            # Argument serializer for file output
-│
-└── logs/
-    └── logs-file.json                 # Persistent log storage
+
+### Common Timezones
+
+By default, timestamps use your server's timezone. If your server is in a different timezone than you, specify it in `initDebug()`:
+
+```javascript
+initDebug({
+  timezone: "Asia/Kolkata"      // India
+  // timezone: "America/New_York"  // US Eastern
+  // timezone: "America/Los_Angeles"  // US Pacific
+  // timezone: "Europe/London"     // UK
+  // timezone: "Asia/Tokyo"        // Japan
+  // timezone: "Australia/Sydney"  // Australia
+});
 ```
+
+[Full list of timezones →](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
 ---
 
-**Output:** Logs appear in terminal with `[BROWSER]:` prefix and are saved to `logs/logs-file.json` with timestamps and IDs.
+**Output:** Logs appear in terminal with `[BROWSER]:` prefix and are saved to `debug-logs/logs-file.json` with timestamps and IDs.
