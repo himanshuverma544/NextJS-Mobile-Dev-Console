@@ -1,6 +1,6 @@
 {
   "name": "nextjs-mobile-dev-console",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A mobile-friendly debugging console for Next.js applications that logs to terminal and files when browser dev tools aren't accessible",
   "main": "index.js",
   "type": "module",
@@ -13,7 +13,8 @@
   },
   "keywords": [
    "nextjs-mobile-logger",
-   "nextjs-dev-console-for-mobile"
+   "nextjs-dev-console-for-mobile",
+   "nextjs-mobile-dev-console"
   ],
   "author": "Himanshu Verma <himanshuverma544@gmail.com>",
   "license": "MIT",

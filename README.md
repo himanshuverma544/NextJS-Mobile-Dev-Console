@@ -1,6 +1,6 @@
 # NextJS-Mobile-Dev-Console
 
-**Version:** 1.1.1
+**Version:** 1.1.2
 
 ## Table of Contents
 - [Why This Exists](#why-this-exists)
