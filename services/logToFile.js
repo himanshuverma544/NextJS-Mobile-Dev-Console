@@ -1,15 +1,16 @@
 "use server";
 
 import fs from "fs";
+import path from "path";
 
-import formatTime from "@/app/actions/logging/helpers/functions/formatTime.js";
-import serializeArg from "@/app/actions/logging/helpers/functions/serializeArg.js";
-import cleanCache from "@/app/actions/logging/helpers/functions/cleanCache.js";
-import filterDuplicates from "@/app/actions/logging/helpers/functions/filterDuplicates.js";
+import formatTime from "../helpers/functions/formatTime.js";
+import serializeArg from "../helpers/functions/serializeArg.js";
+import cleanCache from "../helpers/functions/cleanCache.js";
+import filterDuplicates from "../helpers/functions/filterDuplicates.js";
 
-import { LOG_MESSAGES } from "@/app/actions/logging/helpers/messages.js";
+import { LOG_MESSAGES } from "../helpers/messages.js";
 
-import { LOG_FILE_PATH, DUPLICATE_CONFIG } from "@/app/actions/logging/config.js";
+import { config } from "../config.js";
 
 
 // Queue to collect all log entries
@@ -25,15 +26,21 @@ const processQueue = () => {
   if (logQueue.length === 0) return;
 
   // Clean expired entries first
-  cleanCache(recentLogs, DUPLICATE_CONFIG.CACHE_EXPIRY_MS);
+  cleanCache(recentLogs, config.cacheExpiryMs);
 
   try {
+    // Ensure directory exists
+    const logDir = path.dirname(config.logFilePath);
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
+    }
+
     // Read existing logs
     let logs = [];
     let maxId = 0;
 
-    if (fs.existsSync(LOG_FILE_PATH)) {
-      const fileContent = fs.readFileSync(LOG_FILE_PATH, { encoding: "utf8" });
+    if (fs.existsSync(config.logFilePath)) {
+      const fileContent = fs.readFileSync(config.logFilePath, { encoding: "utf8" });
       
       if (fileContent.trim()) {
         logs = JSON.parse(fileContent);
@@ -46,13 +53,13 @@ const processQueue = () => {
     const logsToWrite = filterDuplicates(
       logQueue,
       recentLogs,
-      DUPLICATE_CONFIG.ALLOW_DUPLICATES
+      config.allowDuplicates
     );
 
     // Create log entries with timestamps after deduplication
     const logEntries = logsToWrite.map(args => ({
       id: null,  // Will be set below
-      timestamp: formatTime(),
+      timestamp: formatTime(config.timezone),
       log: args.map(serializeArg),
     }));
 
@@ -64,9 +71,9 @@ const processQueue = () => {
     });
 
     // Write entire array back once
-    fs.writeFileSync(LOG_FILE_PATH, JSON.stringify(logs, null, 2), { encoding: "utf8" });
+    fs.writeFileSync(config.logFilePath, JSON.stringify(logs, null, 2), { encoding: "utf8" });
 
-    const fileName = LOG_FILE_PATH.split('/').pop();
+    const fileName = config.logFilePath.split('/').pop();
     console.log(LOG_MESSAGES.FILE.WRITE_SUCCESS(logEntries.length, fileName));
   }
   catch (error) {
@@ -84,5 +91,5 @@ export default async function logToFile(...args) {
 
   // Reset timer - wait for required time
   clearTimeout(timer);
-  timer = setTimeout(processQueue, DUPLICATE_CONFIG.DEBOUNCE_DELAY_MS);
+  timer = setTimeout(processQueue, config.debounceDelayMs);
 }

@@ -1,9 +1,12 @@
 // services as raw functions usage
-import logToTerminal from "@/app/actions/logging/services/logToTerminal.js";
-import logToFile from "@/app/actions/logging/services/logToFile.js";
+import logToTerminal from "./services/logToTerminal.js";
+import logToFile from "./services/logToFile.js";
 
 // hook for client components with server logging, for keeping safe from hydration errors
-import useDebug from "@/app/actions/logging/hooks/useDebug.js";
+import useDebug from "./hooks/useDebug.js";
+
+// configuration
+import { initDebug } from "./config.js";
 
 
 const debug = {
@@ -14,7 +17,8 @@ const debug = {
 
 export {
   debug,
-  useDebug
+  useDebug,
+  initDebug
 };
 
 

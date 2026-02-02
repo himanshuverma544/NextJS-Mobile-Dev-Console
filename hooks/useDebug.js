@@ -2,10 +2,10 @@
 
 import { useEffect, useRef } from "react";
 
-import logToTerminal from "@/app/actions/logging/services/logToTerminal.js";
-import logToFile from "@/app/actions/logging/services/logToFile.js";
+import logToTerminal from "../services/logToTerminal.js";
+import logToFile from "../services/logToFile.js";
 
-import { ALLOW_HMR_DUPLICATES } from "@/app/actions/logging/config.js";
+import { config } from "../config.js";
 
 
 const loggedTerminalKeys = new Set();
@@ -35,11 +35,11 @@ export default function useDebug() {
       const key = JSON.stringify(terminalArgsRef.current);
       
       // Only log if not already logged (when HMR duplicate prevention is enabled)
-      if (ALLOW_HMR_DUPLICATES || !loggedTerminalKeys.has(key)) {
+      if (config.allowHmrDuplicates || !loggedTerminalKeys.has(key)) {
 
         logToTerminal(...terminalArgsRef.current);
 
-        if (!ALLOW_HMR_DUPLICATES) {
+        if (!config.allowHmrDuplicates) {
           loggedTerminalKeys.add(key);
         }
       }
@@ -56,11 +56,11 @@ export default function useDebug() {
       const key = JSON.stringify(fileArgsRef.current);
       
       // Only log if not already logged (when HMR duplicate prevention is enabled)
-      if (ALLOW_HMR_DUPLICATES || !loggedFileKeys.has(key)) {
+      if (config.allowHmrDuplicates || !loggedFileKeys.has(key)) {
 
         logToFile(...fileArgsRef.current);
 
-        if (!ALLOW_HMR_DUPLICATES) {
+        if (!config.allowHmrDuplicates) {
           loggedFileKeys.add(key);
         }
       }
