@@ -1,8 +1,7 @@
-export default function formatTime() {
+export default function formatTime(timezone) {
 
-  // Force IST (Asia/Kolkata) so logs align with India local time
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Kolkata",
+  // Build options for date formatting
+  const options = {
     year: "numeric",
     month: "short",
     day: "2-digit",
@@ -10,7 +9,14 @@ export default function formatTime() {
     minute: "2-digit",
     second: "2-digit",
     hour12: false,
-  }).formatToParts(new Date());
+  };
+
+  // Only add timeZone if specified, otherwise uses system timezone
+  if (timezone) {
+    options.timeZone = timezone;
+  }
+
+  const parts = new Intl.DateTimeFormat("en-US", options).formatToParts(new Date());
 
   const map = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
 
