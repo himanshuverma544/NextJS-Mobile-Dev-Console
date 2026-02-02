@@ -1,0 +1,46 @@
+{
+  "name": "nextjs-mobile-dev-console",
+  "version": "1.1.1",
+  "description": "A mobile-friendly debugging console for Next.js applications that logs to terminal and files when browser dev tools aren't accessible",
+  "main": "index.js",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./config": "./config.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+   "nextjs-mobile-logger",
+   "nextjs-dev-console-for-mobile"
+  ],
+  "author": "Himanshu Verma <himanshuverma544@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/himanshuverma544/NextJS-Mobile-Dev-Console.git"
+  },
+  "bugs": {
+    "url": "https://github.com/himanshuverma544/NextJS-Mobile-Dev-Console/issues"
+  },
+  "homepage": "https://github.com/himanshuverma544/NextJS-Mobile-Dev-Console#readme",
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "next": "^14.0.0 || ^15.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "index.js",
+    "config.js",
+    "hooks/",
+    "services/",
+    "helpers/",
+    "README.md",
+    "EXAMPLES.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ]
+}
