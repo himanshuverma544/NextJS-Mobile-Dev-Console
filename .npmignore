@@ -1,0 +1,25 @@
+# Development files
+.git/
+.github/
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+*.test.js
+*.spec.js
+
+# Documentation development files
+docs/
+PUBLISHING.md
+
+# Examples (if any)
+examples/
