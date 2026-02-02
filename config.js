@@ -1,17 +1,45 @@
 import path from "path";
 
 
-export const DUPLICATE_CONFIG = {
-  ALLOW_DUPLICATES: false,        // true: allow duplicates, false: prevent duplicates
-  CACHE_EXPIRY_MS: 3000,          // How long to remember logs for deduplication (ms)
-  DEBOUNCE_DELAY_MS: 1000,        // Wait time before processing queued logs (ms)
+// Default configuration
+const DEFAULT_CONFIG = {
+  allowDuplicates: false,        // true: allow duplicates, false: prevent duplicates
+  cacheExpiryMs: 3000,          // How long to remember logs for deduplication (ms)
+  debounceDelayMs: 1000,        // Wait time before processing queued logs (ms)
+  allowHmrDuplicates: false,    // Allow duplicate logs across HMR remounts in useDebug hook
+  logFilePath: process.env.LOG_FILE_PATH || path.join(process.cwd(), "debug-logs", "logs-file.json"),
+  timezone: undefined,          // Timezone for timestamps (undefined = system timezone)
+  isDev: process.env.NODE_ENV === "development",  // Auto-detect development mode
 };
 
 
-// Allow duplicate logs across HMR remounts in useDebug hook
-export const ALLOW_HMR_DUPLICATES = false;
+// Runtime configuration - can be updated via initDebug()
+export const config = { ...DEFAULT_CONFIG };
 
 
-export const LOG_FILE_PATH = path.join(
-  process.cwd(), "src/app/actions/logging/logs/logs-file.json"
-);
+// Initialize/update configuration
+export function initDebug(userConfig = {}) {
+  if (userConfig.allowDuplicates !== undefined) {
+    config.allowDuplicates = userConfig.allowDuplicates;
+  }
+  if (userConfig.cacheExpiryMs !== undefined) {
+    config.cacheExpiryMs = userConfig.cacheExpiryMs;
+  }
+  if (userConfig.debounceDelayMs !== undefined) {
+    config.debounceDelayMs = userConfig.debounceDelayMs;
+  }
+  if (userConfig.allowHmrDuplicates !== undefined) {
+    config.allowHmrDuplicates = userConfig.allowHmrDuplicates;
+  }
+  if (userConfig.logFilePath !== undefined) {
+    config.logFilePath = userConfig.logFilePath;
+  }
+  if (userConfig.timezone !== undefined) {
+    config.timezone = userConfig.timezone;
+  }
+  if (userConfig.isDev !== undefined) {
+    config.isDev = userConfig.isDev;
+  }
+  
+  return config;
+}
