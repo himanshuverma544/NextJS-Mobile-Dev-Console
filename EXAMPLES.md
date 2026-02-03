@@ -20,7 +20,7 @@ initDebug({
   cacheExpiryMs: 3000,
   debounceDelayMs: 1000,
   allowHmrDuplicates: false,
-  logFilePath: "./debug-logs/debug.json",
+  logFilePath: "./custom/path/logs.json",
   timezone: "Asia/Kolkata"  // specify timezone (default: system timezone)
 });
 
@@ -243,7 +243,7 @@ export default function UserForm() {
 import { initDebug } from "nextjs-mobile-dev-console";
 
 initDebug({
-  logFilePath: "./debug/my-logs.json"
+  logFilePath: "/custom/path/logs.json"
 });
 ```
 
@@ -275,11 +275,12 @@ initDebug({
   allowDuplicates: config.isDev,        // Allow duplicates in dev
   debounceDelayMs: config.isDev ? 500 : 1500,  // Faster in dev
   logFilePath: config.isDev 
-    ? "./debug-logs/dev-logs.json" 
-    : "./debug-logs/prod-logs.json"
+    ? "./custom/path/logs.json" 
+    : "./custom/path/logs.json"
 });
 
-// Or ovehjkh({
+// Or override isDev manually
+initDebug({
   isDev: true  // Force development mode
 });
 ```
@@ -320,13 +321,13 @@ initDebug({
 Look in your Next.js dev server terminal - they appear with `[BROWSER]:` prefix
 
 **File logs:**
-Check `./debug-logs/logs-file.json` (or your custom path) - it's a JSON file with timestamps and IDs
+Check `./debug-logs/logs.json` (or your custom path) - it's a JSON file with timestamps and IDs
 
 ## Troubleshooting
 
 ### Logs not appearing?
 - Check your terminal output for `[BROWSER]:` prefix
-- Verify `./debug-logs/logs-file.json` exists and is being written to
+- Verify `./debug-logs/logs.json` exists and is being written to
 - Make sure you're not blocking with duplicate prevention
 
 ### Hydration errors?
