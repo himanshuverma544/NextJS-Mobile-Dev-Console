@@ -1,6 +1,6 @@
 # NextJS-Mobile-Dev-Console
 
-**Version:** 1.1.2
+**Version:** 1.1.3
 
 ## Table of Contents
 - [Why This Exists](#why-this-exists)
@@ -41,35 +41,27 @@ pnpm add nextjs-mobile-dev-console
 
 ## Quick Start
 
-**1. Optional: Initialize with custom configuration** (in your root layout or `_app.js`)
-
-```javascript
-// app/layout.js or pages/_app.js
-import { initDebug } from "nextjs-mobile-dev-console";
-
-// Configure once at app startup (optional - defaults work fine)
-initDebug({
-  allowDuplicates: false,      // Prevent duplicate logs
-  cacheExpiryMs: 3000,         // Cache window for duplicates
-  debounceDelayMs: 1000,       // Batch processing delay
-  allowHmrDuplicates: false,   // Prevent duplicates on HMR
-  logFilePath: "./debug-logs/my-debug.json",  // Custom log file path
-  timezone: "Asia/Kolkata",    // Timezone for log timestamps (default: system timezone)
-  isDev: true                  // Development mode (auto-detected by default)
-});
-
-export default function RootLayout({ children }) {
-  return <html><body>{children}</body></html>;
-}
-```
-
-**2. Use anywhere in your app**
+**Use anywhere in your app**
 
 ```javascript
 import { debug } from "nextjs-mobile-dev-console";
 
 debug.terminal("Hello from Next.js!");
 debug.file("User logged in:", userData);
+```
+
+```javascript
+import { useDebug } from "nextjs-mobile-dev-console"; // use hook only at rendering phase
+
+function Component() {
+  const log = useDebug();
+  
+  // Safe during render - logs after mount
+  log.terminal("Component rendered");
+  log.file("Props:", props);
+  
+  return <div>Hello</div>;
+}
 ```
 
 ---
@@ -155,7 +147,7 @@ initDebug({
   cacheExpiryMs: 5000,           // How long to remember logs in ms (default: 3000)
   debounceDelayMs: 1500,         // Batch delay before processing in ms (default: 1000)
   allowHmrDuplicates: true,      // Allow duplicates on HMR remounts (default: false)
-  logFilePath: "./custom/path/logs.json",  // Custom log file path (default: ./debug-logs/logs-file.json)
+  logFilePath: "./custom/path/logs.json",  // Custom log file path (default: ./debug-logs/logs.json)
   timezone: "Asia/Kolkata"   // Timezone for timestamps (default: system timezone)
 });
 ```
@@ -168,7 +160,7 @@ Set `LOG_FILE_PATH` in your `.env` file:
 
 ```bash
 # .env.local
-LOG_FILE_PATH=./custom/path/debug.json
+LOG_FILE_PATH=./custom/path/logs.json
 ```
 
 ### Common Timezones
@@ -190,4 +182,4 @@ initDebug({
 
 ---
 
-**Output:** Logs appear in terminal with `[BROWSER]:` prefix and are saved to `debug-logs/logs-file.json` with timestamps and IDs.
+**Output:** Logs appear in terminal with `[BROWSER]:` prefix and are saved to `debug-logs/logs.json` with timestamps and IDs.
