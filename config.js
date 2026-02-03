@@ -7,7 +7,7 @@ const DEFAULT_CONFIG = {
   cacheExpiryMs: 3000,          // How long to remember logs for deduplication (ms)
   debounceDelayMs: 1000,        // Wait time before processing queued logs (ms)
   allowHmrDuplicates: false,    // Allow duplicate logs across HMR remounts in useDebug hook
-  logFilePath: process.env.LOG_FILE_PATH || path.join(process.cwd(), "debug-logs", "logs-file.json"),
+  logFilePath: process.env.LOG_FILE_PATH || path.join(process.cwd(), "debug-logs", "logs.json"),
   timezone: undefined,          // Timezone for timestamps (undefined = system timezone)
   isDev: process.env.NODE_ENV === "development",  // Auto-detect development mode
 };
