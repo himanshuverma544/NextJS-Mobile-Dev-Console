@@ -7,6 +7,7 @@ import formatTime from "../helpers/functions/formatTime.js";
 import serializeArg from "../helpers/functions/serializeArg.js";
 import cleanCache from "../helpers/functions/cleanCache.js";
 import filterDuplicates from "../helpers/functions/filterDuplicates.js";
+import createReadme from "../helpers/functions/createDebugLogsReadMe.js";
 
 import { LOG_MESSAGES } from "../helpers/messages.js";
 
@@ -33,6 +34,7 @@ const processQueue = () => {
     const logDir = path.dirname(config.logFilePath);
     if (!fs.existsSync(logDir)) {
       fs.mkdirSync(logDir, { recursive: true });
+      createReadme(logDir);
     }
 
     // Read existing logs
@@ -73,8 +75,8 @@ const processQueue = () => {
     // Write entire array back once
     fs.writeFileSync(config.logFilePath, JSON.stringify(logs, null, 2), { encoding: "utf8" });
 
-    const fileName = config.logFilePath.split('/').pop();
-    console.log(LOG_MESSAGES.FILE.WRITE_SUCCESS(logEntries.length, fileName));
+    const relativePath = path.relative(process.cwd(), config.logFilePath);
+    console.log(LOG_MESSAGES.FILE.WRITE_SUCCESS(logEntries.length, relativePath));
   }
   catch (error) {
     console.error(LOG_MESSAGES.FILE.WRITE_ERROR, error);
