@@ -10,7 +10,6 @@
 - [Usage](#usage)
   - [Raw Functions](#raw-functions-debugterminal--debugfile)
   - [Hook (useDebug)](#hook-usedebug)
-  - [Simple Examples](#simple-examples)
 - [Configuration](#configuration)
 
 ---
